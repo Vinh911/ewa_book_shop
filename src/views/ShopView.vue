@@ -1,8 +1,10 @@
-<script setup>
+<script>
+import BookItem from '../components/BookItem.vue'
 
 const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
 
 export default {
+  components: {BookItem},
   data: () => ({
     books: null
   }),
@@ -22,9 +24,8 @@ export default {
   <div class="shop">
     <h1>This is the shop page</h1>
     <ul>
-      <li v-for="{id, title} in books">
-        <p>{{ id }}</p>
-        <p>{{ title }}</p>
+      <li v-for="book in books">
+          <BookItem :book="book"/>
       </li>
     </ul>
 
@@ -32,4 +33,7 @@ export default {
 </template>
 
 <style>
+ul li {
+  list-style: none;
+}
 </style>
