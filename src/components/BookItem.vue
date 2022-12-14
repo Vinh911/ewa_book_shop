@@ -27,7 +27,7 @@
       <button @click="quantity++">+</button>
       <span>{{ quantity }}</span>
       <button  @click="quantity <= 0 ? null : quantity--">-</button>
-      <button>add to basket</button>
+      <button @click="$emit('addToBasket', book.title, quantity)">add to basket</button>
     </div>
   </div>
 </template>
