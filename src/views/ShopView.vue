@@ -3,45 +3,51 @@ import BookItem from '../components/BookItem.vue'
 import {ref} from "vue";
 
 const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
-const cart = ref({})
 
 export default {
   components: {BookItem},
   data: () => ({
-    books: null
+    books: null,
+    cart: ref({}),
   }),
   created() {
     // fetch on init
     this.fetchData()
   },
-  watch: {
-    cart() {
-      console.log(cart)
-    }
-  },
   methods: {
     async fetchData() {
       this.books = await (await fetch(`${API_URL}`)).json()
     },
-    addToBasket(title, quantity) {
-      if (cart.value[title]) {
-        cart.value[title] += quantity
+    addToCart(title, quantity) {
+      if(this.cart[title]) {
+        this.cart[title] += quantity
       } else {
-        cart.value[title] = quantity
+        this.cart[title] = quantity
       }
-      console.log(cart.value)
+    },
+    getCartTotal(cart) {
+      return Object.values(cart).reduce((a, b) => a + b, 0)
     }
   }
 }
+
 </script>
 
 <template>
   <div class="shop">
     <h1>This is the shop page</h1>
-    <ul>
+    <ul class="shop-items">
       <li v-for="book in books">
-          <BookItem :book="book" @addToBasket="(b, c) => addToBasket(b, c)"/>
+          <BookItem :book="book" @addToCart="(title, quantity) => addToCart(title, quantity)"/>
       </li>
+    </ul>
+    <ul v-if="Object.keys(cart).length > 0">
+      <li v-for="(quantity, title) in cart">
+        {{ title }}: {{ quantity }}
+      </li>
+      <li>Total: {{ getCartTotal(cart) }}</li>
+      //calculate total price
+      <li>Price: </li>
     </ul>
   </div>
 </template>
