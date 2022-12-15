@@ -18,15 +18,29 @@ export default {
     async fetchData() {
       this.books = await (await fetch(`${API_URL}`)).json()
     },
-    addToCart(title, quantity) {
+    addToCart(title, quantity, price) {
+
       if(this.cart[title]) {
-        this.cart[title] += quantity
+        this.cart[title] = [this.cart[title][0] + quantity, price]
       } else {
-        this.cart[title] = quantity
+        this.cart[title] = [quantity, price]
       }
     },
     getCartTotal(cart) {
-      return Object.values(cart).reduce((a, b) => a + b, 0)
+      // get total amount of items in cart
+      let total = 0
+      for (const [key, value] of Object.entries(cart)) {
+        total += value[0]
+      }
+      return total
+    },
+    getCartTotalPrice(cart) {
+      let total = 0
+      for (const [key, value] of Object.entries(cart)) {
+        total += value[0] * value[1]
+      }
+      // round to 2 decimal places
+      return total.toFixed(2)
     }
   }
 }
@@ -36,24 +50,36 @@ export default {
 <template>
   <div class="shop">
     <h1>This is the shop page</h1>
-    <ul class="shop-items">
-      <li v-for="book in books">
-          <BookItem :book="book" @addToCart="(title, quantity) => addToCart(title, quantity)"/>
-      </li>
-    </ul>
-    <ul v-if="Object.keys(cart).length > 0">
-      <li v-for="(quantity, title) in cart">
-        {{ title }}: {{ quantity }}
-      </li>
-      <li>Total: {{ getCartTotal(cart) }}</li>
-      //calculate total price
-      <li>Price: </li>
-    </ul>
+    <table class="shop-items">
+      <tr v-for="book in books">
+          <BookItem :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
+      </tr>
+    </table>
+    <table v-if="Object.keys(cart).length > 0">
+      <tr>
+        <td>Artikelname</td>
+        <td>Anzahl</td>
+        <td>Preis</td>
+        <td>Gesamtpreis</td>
+      </tr>
+      <tr v-for="(item, index) in cart">
+        <td>{{ index }}</td>
+        <td>{{ item[0] }}</td>
+        <td>{{ item[1] }}</td>
+        <td>{{ item[0] * item[1] }}</td>
+      </tr>
+      <tr>
+        <td>Total: {{ getCartTotal(cart) }}</td>
+        <td></td>
+        <td></td>
+        <td>{{ getCartTotalPrice(cart) }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <style>
-ul li {
-  list-style: none;
+.shop {
+  padding: 10px;
 }
 </style>
