@@ -38,14 +38,13 @@
 
 <style>
 .bookItem {
-  border: 1px solid black;
   padding: 10px;
-  margin: 10px;
+  border-bottom: 1px solid black;
 }
 button {
-  min-width: 50px;
+  min-width: 75px;
   margin: 5px;
-  background-color: #2c3e50;
+  background-color: hsla(160, 100%, 37%, 1);
   color: white;
   border: none;
   border-radius: 5px;

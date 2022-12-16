@@ -12,5 +12,4 @@ export default {
 </template>
 
 <style>
-
 </style>

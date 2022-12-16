@@ -51,12 +51,12 @@ export default {
 <template>
   <div class="shop">
     <h1>This is the shop page</h1>
-    <table class="shop-items">
+    <table class="items">
       <tr v-for="book in books">
-          <BookItem :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
+          <BookItem class="bookItem" :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
       </tr>
     </table>
-    <table>
+    <table class="cart">
       <tr>
         <td>Artikelname</td>
         <td>Anzahl</td>
@@ -64,14 +64,15 @@ export default {
         <td>Gesamtpreis</td>
       </tr>
       <tr v-if="Object.keys(cart).length > 0" v-for="(item, index) in cart">
-        <CartItem :cartItem="item" :index="index"/>
+        <CartItem class="cartItem" :cartItem="item" :index="index"/>
       </tr>
-      <tr>
+      <tr class="cartSummary">
         <td>Total: {{ getCartTotal(cart) }}</td>
         <td></td>
         <td></td>
         <td>{{ getCartTotalPrice(cart) }}</td>
       </tr>
+      <tr><td colspan="4"><button id="orderButton">Bestellen</button></td></tr>
     </table>
   </div>
 </template>
@@ -79,5 +80,25 @@ export default {
 <style>
 .shop {
   padding: 10px;
+  width: 100%;
+}
+.items {
+  width: 100%;
+}
+.cart {
+  width: 100%;
+}
+.cartSummary td {
+  border-top: 1px solid black;
+  font-weight: bold;
+}
+#orderButton {
+  width: 100%;
+  height: 50px;
+  background-color: hsla(160, 100%, 37%, 1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
 }
 </style>
