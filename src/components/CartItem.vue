@@ -10,6 +10,3 @@ export default {
     <td>{{ cartItem[1] }}</td>
     <td>{{ cartItem[0] * cartItem[1] }}</td>
 </template>
-
-<style>
-</style>

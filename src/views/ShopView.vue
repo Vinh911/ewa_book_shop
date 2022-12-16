@@ -8,6 +8,7 @@ const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
 export default {
   components: {CartItem, BookItem},
   data: () => ({
+    search: '',
     books: null,
     cart: ref({}),
   }),
@@ -42,17 +43,31 @@ export default {
       }
       // round to 2 decimal places
       return total.toFixed(2)
+    },
+    handleOrder(cart){
+      console.log(cart)
+    }
+  },
+  computed: {
+    filteredBooks() {
+      return this.books.filter(book => {
+        return book.title.toLowerCase().includes(this.search.toLowerCase())
+      })
     }
   }
 }
-
 </script>
 
 <template>
   <div class="shop">
     <h1>This is the shop page</h1>
     <table class="items">
-      <tr v-for="book in books">
+      <tr>
+        <td colspan="4">
+          <input id="searchField" type="text" placeholder="Search for books" v-model="search">
+        </td>
+      </tr>
+      <tr v-for="book in filteredBooks">
           <BookItem class="bookItem" :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
       </tr>
     </table>
@@ -64,7 +79,7 @@ export default {
         <td>Gesamtpreis</td>
       </tr>
       <tr v-if="Object.keys(cart).length > 0" v-for="(item, index) in cart">
-        <CartItem class="cartItem" :cartItem="item" :index="index"/>
+        <CartItem :cartItem="item" :index="index"/>
       </tr>
       <tr class="cartSummary">
         <td>Total: {{ getCartTotal(cart) }}</td>
@@ -72,7 +87,7 @@ export default {
         <td></td>
         <td>{{ getCartTotalPrice(cart) }}</td>
       </tr>
-      <tr><td colspan="4"><button id="orderButton">Bestellen</button></td></tr>
+      <tr><td colspan="4"><button id="orderButton" @click="handleOrder(cart)">Bestellen</button></td></tr>
     </table>
   </div>
 </template>
@@ -91,6 +106,10 @@ export default {
 .cartSummary td {
   border-top: 1px solid black;
   font-weight: bold;
+}
+#searchField {
+  width: 100%;
+  height: 50px;
 }
 #orderButton {
   width: 100%;
