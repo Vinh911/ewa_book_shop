@@ -1,11 +1,12 @@
 <script>
-import BookItem from '../components/BookItem.vue'
 import {ref} from "vue";
+import BookItem from '../components/BookItem.vue';
+import CartItem from "../components/CartItem.vue";
 
 const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
 
 export default {
-  components: {BookItem},
+  components: {CartItem, BookItem},
   data: () => ({
     books: null,
     cart: ref({}),
@@ -55,18 +56,15 @@ export default {
           <BookItem :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
       </tr>
     </table>
-    <table v-if="Object.keys(cart).length > 0">
+    <table>
       <tr>
         <td>Artikelname</td>
         <td>Anzahl</td>
         <td>Preis</td>
         <td>Gesamtpreis</td>
       </tr>
-      <tr v-for="(item, index) in cart">
-        <td>{{ index }}</td>
-        <td>{{ item[0] }}</td>
-        <td>{{ item[1] }}</td>
-        <td>{{ item[0] * item[1] }}</td>
+      <tr v-if="Object.keys(cart).length > 0" v-for="(item, index) in cart">
+        <CartItem :cartItem="item" :index="index"/>
       </tr>
       <tr>
         <td>Total: {{ getCartTotal(cart) }}</td>
