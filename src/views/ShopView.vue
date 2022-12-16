@@ -1,53 +1,104 @@
 <script>
-import BookItem from '../components/BookItem.vue'
 import {ref} from "vue";
+import BookItem from '../components/BookItem.vue';
+import CartItem from "../components/CartItem.vue";
 
 const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
-const cart = ref({})
 
 export default {
-  components: {BookItem},
+  components: {CartItem, BookItem},
   data: () => ({
-    books: null
+    books: null,
+    cart: ref({}),
   }),
   created() {
     // fetch on init
     this.fetchData()
   },
-  watch: {
-    cart() {
-      console.log(cart)
-    }
-  },
   methods: {
     async fetchData() {
       this.books = await (await fetch(`${API_URL}`)).json()
     },
-    addToBasket(title, quantity) {
-      if (cart.value[title]) {
-        cart.value[title] += quantity
+    addToCart(title, quantity, price) {
+
+      if(this.cart[title]) {
+        this.cart[title] = [this.cart[title][0] + quantity, price]
       } else {
-        cart.value[title] = quantity
+        this.cart[title] = [quantity, price]
       }
-      console.log(cart.value)
+    },
+    getCartTotal(cart) {
+      // get total amount of items in cart
+      let total = 0
+      for (const [key, value] of Object.entries(cart)) {
+        total += value[0]
+      }
+      return total
+    },
+    getCartTotalPrice(cart) {
+      let total = 0
+      for (const [key, value] of Object.entries(cart)) {
+        total += value[0] * value[1]
+      }
+      // round to 2 decimal places
+      return total.toFixed(2)
     }
   }
 }
+
 </script>
 
 <template>
   <div class="shop">
     <h1>This is the shop page</h1>
-    <ul>
-      <li v-for="book in books">
-          <BookItem :book="book" @addToBasket="(b, c) => addToBasket(b, c)"/>
-      </li>
-    </ul>
+    <table class="items">
+      <tr v-for="book in books">
+          <BookItem class="bookItem" :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
+      </tr>
+    </table>
+    <table class="cart">
+      <tr>
+        <td>Artikelname</td>
+        <td>Anzahl</td>
+        <td>Preis</td>
+        <td>Gesamtpreis</td>
+      </tr>
+      <tr v-if="Object.keys(cart).length > 0" v-for="(item, index) in cart">
+        <CartItem class="cartItem" :cartItem="item" :index="index"/>
+      </tr>
+      <tr class="cartSummary">
+        <td>Total: {{ getCartTotal(cart) }}</td>
+        <td></td>
+        <td></td>
+        <td>{{ getCartTotalPrice(cart) }}</td>
+      </tr>
+      <tr><td colspan="4"><button id="orderButton">Bestellen</button></td></tr>
+    </table>
   </div>
 </template>
 
 <style>
-ul li {
-  list-style: none;
+.shop {
+  padding: 10px;
+  width: 100%;
+}
+.items {
+  width: 100%;
+}
+.cart {
+  width: 100%;
+}
+.cartSummary td {
+  border-top: 1px solid black;
+  font-weight: bold;
+}
+#orderButton {
+  width: 100%;
+  height: 50px;
+  background-color: hsla(160, 100%, 37%, 1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
 }
 </style>
