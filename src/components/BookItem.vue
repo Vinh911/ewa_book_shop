@@ -14,6 +14,9 @@
         taxRate = parseFloat(taxRate)
         let priceWithTax = (price  / 100) * (taxRate + 100)
         return  priceWithTax.toFixed(2)
+      },
+      getImg(bookImage){
+        return "https://ivm108.informatik.htw-dresden.de/ewa/g02/resources/"+bookImage
       }
     }
   }
@@ -21,13 +24,18 @@
 
 <template>
   <div class="bookItem">
-    <span>Titel: {{ book.title }}</span><br>
-    <span>Autor: {{ book.author }}</span><br>
-    <span>Verlag: {{ book.publisher }}</span><br>
-    <span>Beschreibung: {{ book.description }}</span><br>
-    <span>Bestand: {{ book.stock }}</span><br>
-    <span>Preis: {{ price }}</span>
-    <div>
+    <div class="imgContainer">
+      <img :alt=book.img :src=getImg(book.img)>
+    </div>
+    <div class="info">
+      <span>Titel: {{ book.title }}</span><br>
+      <span>Autor: {{ book.author }}</span><br>
+      <span>Verlag: {{ book.publisher }}</span><br>
+      <span>Beschreibung: {{ book.description }}</span><br>
+      <span>Bestand: {{ book.stock }}</span><br>
+      <span>Preis: {{ price }}</span>
+    </div>
+    <div class="buttonRow">
       <button @click="quantity++">+</button>
       <span>{{ quantity }}</span>
       <button  @click="quantity <= 0 ? null : quantity--">-</button>
@@ -41,6 +49,50 @@
   padding: 10px;
   border-bottom: 1px solid black;
 }
+
+@media (max-width: 768px) {
+  .bookItem {
+    display: flex;
+    flex-direction: column;
+  }
+  .info {
+    display: flex;
+    width: 100% !important;
+  }
+  .info span {
+    width: 100%;
+    text-align: justify;
+  }
+  .imgContainer {
+    width: 100% !important;
+  }
+  .buttonRow {
+    display: flex;
+    text-align: center !important;
+  }
+}
+
+.info {
+  display: inline-block;
+  width: 50%;
+}
+
+.imgContainer {
+  display: inline-block;
+  width: 50%;
+}
+
+.imgContainer img {
+  max-height: 200px;
+  margin-left: 75px;
+}
+
+.buttonRow {
+  display: inline-block;
+  width: 100%;
+  text-align: right;
+}
+
 button {
   min-width: 75px;
   margin: 5px;

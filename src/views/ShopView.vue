@@ -67,7 +67,6 @@ export default {
 
 <template>
   <div class="shop">
-    <h1>This is the shop page</h1>
     <input id="search" type="text" v-model="search" placeholder="Search for a book" />
     <table class="items">
       <tr v-for="book in filteredBooks">
