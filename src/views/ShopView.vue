@@ -43,6 +43,13 @@ export default {
       }
       // round to 2 decimal places
       return total.toFixed(2)
+    },
+    handlePayment(cart){
+      //check if cart is empty
+      if(Object.keys(cart).length === 0){
+        alert("Warenkorb ist leer!")
+      }
+
     }
   },
   computed: {
@@ -75,7 +82,7 @@ export default {
         <td>Gesamtpreis</td>
       </tr>
       <tr v-if="Object.keys(cart).length > 0" v-for="(item, index) in cart">
-        <CartItem class="cartItem" :cartItem="item" :index="index"/>
+        <CartItem :cartItem="item" :index="index"/>
       </tr>
       <tr class="cartSummary">
         <td>Total: {{ getCartTotal(cart) }}</td>
@@ -83,7 +90,7 @@ export default {
         <td></td>
         <td>{{ getCartTotalPrice(cart) }}</td>
       </tr>
-      <tr><td colspan="4"><button id="orderButton">Bestellen</button></td></tr>
+      <tr><td colspan="4"><button id="orderButton" @click="handlePayment(cart)">Bestellen</button></td></tr>
     </table>
   </div>
 </template>
