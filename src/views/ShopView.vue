@@ -3,7 +3,7 @@ import {ref} from "vue";
 import BookItem from '../components/BookItem.vue';
 import CartItem from "../components/CartItem.vue";
 
-const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
+const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/resources/index.php`
 
 export default {
   components: {CartItem, BookItem},
@@ -44,31 +44,32 @@ export default {
       // round to 2 decimal places
       return total.toFixed(2)
     },
-    handleOrder(cart){
-      console.log(cart)
+    handlePayment(cart){
+      //check if cart is empty
+      if(Object.keys(cart).length === 0){
+        alert("Warenkorb ist leer!")
+      }
     }
   },
   computed: {
     filteredBooks() {
-      return this.books.filter(book => {
-        return book.title.toLowerCase().includes(this.search.toLowerCase())
-      })
+      if(this.books){
+        return this.books.filter(book => {
+          return book.title.toLowerCase().includes(this.search.toLowerCase())
+        })
+      }
     }
   }
 }
+
 </script>
 
 <template>
   <div class="shop">
-    <h1>This is the shop page</h1>
+    <input id="search" type="text" v-model="search" placeholder="Search for a book" />
     <table class="items">
-      <tr>
-        <td colspan="4">
-          <input id="searchField" type="text" placeholder="Search for books" v-model="search">
-        </td>
-      </tr>
       <tr v-for="book in filteredBooks">
-          <BookItem class="bookItem" :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
+          <BookItem :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
       </tr>
     </table>
     <table class="cart">
@@ -87,7 +88,7 @@ export default {
         <td></td>
         <td>{{ getCartTotalPrice(cart) }}</td>
       </tr>
-      <tr><td colspan="4"><button id="orderButton" @click="handleOrder(cart)">Bestellen</button></td></tr>
+      <tr><td colspan="4"><button id="orderButton" @click="handlePayment(cart)">Bestellen</button></td></tr>
     </table>
   </div>
 </template>
@@ -96,6 +97,11 @@ export default {
 .shop {
   padding: 10px;
   width: 100%;
+}
+#search {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 .items {
   width: 100%;
@@ -106,10 +112,6 @@ export default {
 .cartSummary td {
   border-top: 1px solid black;
   font-weight: bold;
-}
-#searchField {
-  width: 100%;
-  height: 50px;
 }
 #orderButton {
   width: 100%;
