@@ -3,7 +3,7 @@ import {ref} from "vue";
 import BookItem from '../components/BookItem.vue';
 import CartItem from "../components/CartItem.vue";
 
-const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/index.php`
+const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/resources/index.php`
 
 export default {
   components: {CartItem, BookItem},
@@ -49,7 +49,6 @@ export default {
       if(Object.keys(cart).length === 0){
         alert("Warenkorb ist leer!")
       }
-
     }
   },
   computed: {
