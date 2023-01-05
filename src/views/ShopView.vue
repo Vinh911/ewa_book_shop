@@ -4,6 +4,7 @@ import BookItem from '../components/BookItem.vue';
 import CartItem from "../components/CartItem.vue";
 
 const API_URL = `https://ivm108.informatik.htw-dresden.de/ewa/g02/resources/index.php`
+const CHECKOUT_URL = `/ewa/g02/resources/create-checkout-session.php`
 
 export default {
   components: {CartItem, BookItem},
@@ -11,6 +12,7 @@ export default {
     search: '',
     books: null,
     cart: ref({}),
+    checkout: [],
   }),
   created() {
     // fetch on init
@@ -20,12 +22,11 @@ export default {
     async fetchData() {
       this.books = await (await fetch(`${API_URL}`)).json()
     },
-    addToCart(title, quantity, price) {
-
+    addToCart(title, quantity, price, priceId) {
       if(this.cart[title]) {
-        this.cart[title] = [this.cart[title][0] + quantity, price]
+        this.cart[title] = [this.cart[title][0] + quantity, price, priceId]
       } else {
-        this.cart[title] = [quantity, price]
+        this.cart[title] = [quantity, price, priceId]
       }
     },
     getCartTotal(cart) {
@@ -45,10 +46,24 @@ export default {
       return total.toFixed(2)
     },
     handlePayment(cart){
+
       //check if cart is empty
       if(Object.keys(cart).length === 0){
         alert("Warenkorb ist leer!")
       }
+      // display every cart item and quantity in console
+      for (const [key, value] of Object.entries(cart)) {
+        this.checkout.push([value[0], value[2]]);
+      }
+      // send checkout to backend
+      fetch(`${CHECKOUT_URL}`, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.checkout)
+      })
     }
   },
   computed: {
@@ -69,7 +84,7 @@ export default {
     <input id="search" type="text" v-model="search" placeholder="Search for a book" />
     <table class="items">
       <tr v-for="book in filteredBooks">
-          <BookItem :book="book" @addToCart="(title, quantity, price) => addToCart(title, quantity, price)"/>
+          <BookItem :book="book" @addToCart="(title, quantity, price, priceId) => addToCart(title, quantity, price, priceId)"/>
       </tr>
     </table>
     <table class="cart">
